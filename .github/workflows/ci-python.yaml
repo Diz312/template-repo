@@ -1,4 +1,4 @@
-name: CI-Python
+name: ci-python
 on:
   pull_request:
     branches: [ main ]
@@ -29,32 +29,3 @@ jobs:
 
       - name: Build (sanity)
         run: python -m build
-
-name: CI-NodeJS
-on:
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  ci:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Tests
-        run: npm test -- --ci --reporters=default
-
-      - name: Build
-        run: npm run build
