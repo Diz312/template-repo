@@ -20,21 +20,26 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-
-      - name: Install (clean, lockfile-resolved)
-        run: npm ci
-
+      
+      - name: Install dependencies
+        working-directory: apps/web
+        run: npm install --no-audit --no-fund
+      
       - name: Lint (ESLint)
+        working-directory: apps/web
         run: npm run lint -- --max-warnings=0
-
+      
       - name: Type check (TS)
+        working-directory: apps/web
         run: npm run typecheck
         # expects: "typecheck": "tsc --noEmit"
 
       - name: Unit/Component tests
+        working-directory: apps/web
         run: npm test -- --ci
         # e.g. Jest or Vitest + React Testing Library
 
       - name: Build (Next.js)
+        working-directory: apps/web
         run: npm run build
         # expects: "build": "next build"
