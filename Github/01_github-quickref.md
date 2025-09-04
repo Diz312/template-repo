@@ -39,7 +39,7 @@ These two “upstreams” are different ideas:
 **What the common commands do**
 - **git fetch**: Download new commits from remotes into remote‑tracking branches (e.g., updates origin/main). Doesn’t change your local branches.
 
-- **git pull**: Fetch + then update your current local branch from its upstream branch (merge or rebase).
+- **git pull**: Fetch + then update your current local branch from its upstream branch (merge or rebase). 
 
 - **git push**: Upload your local commits to a branch on a remote (usually the upstream branch of your local branch).
 
@@ -139,72 +139,6 @@ git push -u origin main
    - ✅ Do not allow bypassing the above settings
 4. **Enable CI:**
 
-PYTHON
-
-```yaml
-name: CI
-on:
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  ci:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install deps
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          # optional dev deps for lint/test
-          pip install flake8 pytest build
-
-      - name: Lint
-        run: flake8 src tests
-
-      - name: Tests
-        run: pytest --maxfail=1 --disable-warnings -q
-
-      - name: Build (sanity)
-        run: python -m build
-```
-NODE.js
-```yaml
-name: CI
-on:
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  ci:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Tests
-        run: npm test -- --ci --reporters=default
-
-      - name: Build
-        run: npm run build
-```
 After the first PR runs CI, go back to Branch protection and add the exact check names under Required status checks (e.g., CI / ci).
 
 5. **Commit Style:**
@@ -214,4 +148,20 @@ After the first PR runs CI, go back to Branch protection and add the exact check
 - docs: update README
 - chore: bump dependency
 - Optional scopes: feat(search): support top-k
+
+---
+
+# Versions, Tags, Releases
+**Bump version**
+echo "1.2.1" > VERSION && git add VERSION && git commit -m "chore(release): 1.2.1"
+
+**Push code + tag + release (manual)**
+git push origin main
+git tag v1.2.1 && git push origin v1.2.1
+gh release create v1.2.1 --title "v1.2.1" --notes "Fixes: …"
+
+**Update consumer project to new docs tag**
+git subtree pull --prefix docs/shared git@github.com:Diz312/docs-hub.git v1.2.1 --squash
+
+---
 

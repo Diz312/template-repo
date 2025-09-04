@@ -1,0 +1,60 @@
+name: CI-Python
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # optional dev deps for lint/test
+          pip install flake8 pytest build
+
+      - name: Lint
+        run: flake8 src tests
+
+      - name: Tests
+        run: pytest --maxfail=1 --disable-warnings -q
+
+      - name: Build (sanity)
+        run: python -m build
+
+name: CI-NodeJS
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tests
+        run: npm test -- --ci --reporters=default
+
+      - name: Build
+        run: npm run build
