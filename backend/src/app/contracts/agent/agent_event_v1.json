@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/agent_event_v1.json",
+  "title": "AgentEventV1",
+  "type": "object",
+  "required": ["type", "ts", "payload"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Event type",
+      "enum": [
+        "node_started",
+        "node_finished",
+        "tool_called",
+        "tool_error",
+        "token_usage",
+        "step_message"
+      ]
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp (UTC)"
+    },
+    "node": {
+      "type": ["string", "null"],
+      "description": "Optional node identifier"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Event payload. Shape depends on event type."
+    }
+  }
+}
+

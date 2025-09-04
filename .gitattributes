@@ -1,0 +1,19 @@
+* text=auto eol=lf
+
+# Treat images as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+
+# SVG can be large; disable noisy diffs
+*.svg -diff
+
+# Treat lockfiles as generated to reduce diff noise
+package-lock.json -diff linguist-generated
+yarn.lock -diff linguist-generated
+pnpm-lock.yaml -diff linguist-generated
+
+# Docs classification
+docs/** linguist-documentation
+

@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Python tooling
+.venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+coverage*/
+coverage.xml
+
+# Node tooling
+node_modules/
+.next/
+out/
+.turbo/
+coverage/
+
+# Env files
+.env
+.env.*.local
+.env.local
+
+# Editors
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Local logs (keep folder, ignore contents)
+log/*
+!log/.gitkeep
+
