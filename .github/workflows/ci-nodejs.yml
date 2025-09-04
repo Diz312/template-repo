@@ -1,0 +1,40 @@
+name: ci-nodejs
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    env:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      # If builds are memory-heavy:
+      NODE_OPTIONS: "--max_old_space_size=4096"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install (clean, lockfile-resolved)
+        run: npm ci
+
+      - name: Lint (ESLint)
+        run: npm run lint -- --max-warnings=0
+
+      - name: Type check (TS)
+        run: npm run typecheck
+        # expects: "typecheck": "tsc --noEmit"
+
+      - name: Unit/Component tests
+        run: npm test -- --ci
+        # e.g. Jest or Vitest + React Testing Library
+
+      - name: Build (Next.js)
+        run: npm run build
+        # expects: "build": "next build"

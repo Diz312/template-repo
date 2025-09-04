@@ -147,6 +147,8 @@ After the first PR runs CI, go back to Branch protection and add the exact check
 - fix: correct reducer bug
 - docs: update README
 - chore: bump dependency
+- ci: CI workflows
+- test: test related updates
 - Optional scopes: feat(search): support top-k
 
 ---
