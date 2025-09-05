@@ -14,7 +14,7 @@
     "test": "node -e \"console.log('no tests yet')\""
   },
   "dependencies": {
-    "next": "14.2.5",
+    "next": "14.2.32",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
@@ -23,7 +23,7 @@
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "eslint": "8.57.0",
-    "eslint-config-next": "14.2.5",
+    "eslint-config-next": "14.2.32",
     "typescript": "5.4.5",
     "openapi-typescript": "6.7.0",
     "json-schema-to-typescript": "13.1.1"

@@ -15,6 +15,16 @@ Types and contracts:
 Diagnostics page:
 - `/diagnostics` subscribes to `GET /diagnostics/stream` via EventSource and offers a test emitter button.
 
+Path aliases:
+- Use `@/*` to import from the app root (configured in `tsconfig.json`).
+  - Example: `import Viewer from "@/features/agent-timeline/Viewer"`.
+  - If you edit `tsconfig.json`, restart the dev server to pick up changes.
+
+API base URL:
+- Backend base comes from `NEXT_PUBLIC_API_BASE_URL` (see `web/lib/api.ts`).
+- Default is `http://localhost:8000`. Override by creating `web/.env.local`:
+  - `NEXT_PUBLIC_API_BASE_URL=http://localhost:8001`
+
 Checklist:
 - Keep server/client boundaries explicit ("use client").
 - Call backend via `lib/api.ts`; avoid duplicating base URLs.

@@ -40,12 +40,13 @@ Prerequisites: Python 3.12+, Node.js 20+, uv (`pip install uv`) and Docker (opti
 - `cd backend`
 - `uv venv .venv && source .venv/bin/activate`
 - `uv pip install -e ".[dev]"`
-- `uvicorn app.main:app --reload --host ${BACKEND_HOST:-0.0.0.0} --port ${BACKEND_PORT:-8000}`
+- `python -m uvicorn app.main:app --reload --host ${BACKEND_HOST:-0.0.0.0} --port ${BACKEND_PORT:-8000} 2>&1 | tee -a ../log/backend-dev.log`
 
 2) Web
 - `cd web`
 - `npm install`
-- `npm run dev`
+- `npm run dev 2>&1 | tee -a ../log/web-dev.log`
+  - Config: if your backend isn’t at `http://localhost:8000`, set `NEXT_PUBLIC_API_BASE_URL` in `web/.env.local` (e.g., `NEXT_PUBLIC_API_BASE_URL=http://localhost:8001`).
 
 4) Diagnostics (end-to-end smoke)
 - Visit http://localhost:3000/diagnostics to see the live SSE stream.
@@ -53,13 +54,6 @@ Prerequisites: Python 3.12+, Node.js 20+, uv (`pip install uv`) and Docker (opti
 
 3) Environment
 - Copy `.env.example` to `.env` at repo root and adjust values as needed.
-
-## Logging (12‑factor friendly)
-- All logs are emitted as JSON to stdout.
-- During development, capture to local files via tee while still writing to stdout:
-  - Backend: `uvicorn app.main:app --reload 2>&1 | tee -a log/backend-dev.log`
-  - Web: `npm run dev 2>&1 | tee -a log/web-dev.log`
-- The `log/` folder is committed but the contents are ignored (see `.gitignore`).
 
 ## CI & Releases
 - CI runs on PRs to `main`:
@@ -77,36 +71,6 @@ Prerequisites: Python 3.12+, Node.js 20+, uv (`pip install uv`) and Docker (opti
 - 12‑factor: no hardcoded secrets; everything via env.
 - Tests first for new services and agent nodes; keep routes thin.
 - Prefer SSE for agent progress streaming; WebSocket optional later.
-
-## Architecture Diagram
-
-```mermaid
-flowchart TD
-  A[ASGI Entry\napp.main:app] --> B[Settings.from_env\nconfig/settings.py]
-  A --> C[setup_logging\ncommon/observability/logging.py\n(JSON to stdout)]
-  A --> D[Mount Routers]
-  D --> H[features/health/routes.py]
-  D --> I[features/diagnostics/routes.py\nSSE /diagnostics/stream]
-  I --> J[agent/observability/emitter\nInProcessEventEmitter]
-  J --> K[AgentEvent\ncontracts/agent/*.json]
-  K --> L[web/scripts/generate-types.mjs\n(openapi + schemas -> web/types)]
-  B <-- .env/.env.example --> E[Environment]
-  C --> M[stdout] --> N[tee -> log/*.log\n(dev only)]
-  H --> S[service.py & models.py]
-  subgraph Backend
-    A
-    B
-    C
-    D
-    H
-    I
-    J
-    K
-  end
-  subgraph Frontend
-    L
-  end
-```
 
 ## Using This Template
 - Click “Use this template” to make a new repo.
