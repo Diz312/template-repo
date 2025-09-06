@@ -1,5 +1,5 @@
-import Viewer from "@/features/agent-timeline/Viewer";
-import EmitButton from "@/features/agent-timeline/EmitButton";
+import Viewer from "@/features/diagnostics/Viewer";
+import EmitButton from "@/features/diagnostics/EmitButton";
 
 export const dynamic = "force-dynamic";
 
