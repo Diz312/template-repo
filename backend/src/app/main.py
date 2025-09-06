@@ -5,7 +5,6 @@ import time
 from .config.settings import Settings
 from .common.observability.logging import setup_logging, logger
 from .features.health.routes import router as health_router
-from .features.diagnostics.routes import router as diagnostics_router
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -47,7 +46,6 @@ def create_app() -> FastAPI:
         )
 
     app.include_router(health_router)
-    app.include_router(diagnostics_router)
 
     return app
 

@@ -1,31 +1,39 @@
-# Agents Guide (web)
+Purpose: document the vertical, feature-first FE pattern and guardrails for contributors (including AI agents).
 
-Next.js App Router application.
+Principles
+- Feature-first: domain code lives under `features/<name>` and is imported into routes under `src/app/<name>`.
+- Thin routes: files in `src/app` define URLs and compose feature code; avoid embedding complex logic here.
+- Server boundaries: long‑running work, secrets, and agent orchestration belong in the backend. Frontend routes call backend APIs or trigger Server Actions.
+- Config via env: do not hardcode secrets. Only `NEXT_PUBLIC_*` is client-visible.
 
-- routes: `web/app/*`
-- features: `web/features/<name>` vertical slices
-- lib: `web/lib/*` API helpers
-- components: shared presentation components (shared UI under `components/ui`)
-- Env: only access `NEXT_PUBLIC_*` on the client
+Folder responsibilities
+- `src/app/<feature>`: route surface only
+  - `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx` for UI surface
+  - `route.ts` for HTTP handlers (GET/POST/etc) when needed
+  - `actions.ts` for `'use server'` functions tied to this route
+- `features/<feature>`: reusable UI + logic
+  - `components/` (add `'use client'` only where needed)
+  - `hooks/`, `utils/`, `types/`, optional `server/` adapters
+- `src/lib/`: cross‑feature helpers (e.g., `api.ts`, `sse()`)
 
-Types and contracts:
-- Generate API types from backend OpenAPI: `npm run types:openapi`.
-- Generate agent schema types from JSON Schemas: `npm run types:agent`.
+Do / Don’t
+- Do import UI from `features/*` into `src/app/*/page.tsx`
+- Do place feature‑specific endpoints under `src/app/<feature>/*/route.ts`
+- Do place generic endpoints under `src/app/api/*/route.ts`
+- Don’t put reusable components under `src/app` (they won’t be discoverable/reusable)
+- Don’t log secrets; don’t export server values to the client
 
-Diagnostics page:
-- `/diagnostics` subscribes to `GET /diagnostics/stream` via EventSource and offers a test emitter button.
+Runtime & streaming
+- Prefer Node.js runtime in route handlers that touch DB/SDKs: `export const runtime = 'nodejs'`
+- Use `ReadableStream` (SSE) from `route.ts` for incremental updates; consume via `sse()` from `src/lib/api.ts`
 
-Path aliases:
-- Use `@/*` to import from the app root (configured in `tsconfig.json`).
-  - Example: `import Viewer from "@/features/agent-timeline/Viewer"`.
-  - If you edit `tsconfig.json`, restart the dev server to pick up changes.
+Example blueprint
+```
+features/todos/
+  components/TodoList.tsx
+  hooks/useTodos.ts
+src/app/todos/page.tsx        // imports features/todos/components/TodoList
+src/app/todos/stream/route.ts // SSE for live updates (feature-specific)
+src/app/api/health/route.ts   // cross-cutting endpoint
+```
 
-API base URL:
-- Backend base comes from `NEXT_PUBLIC_API_BASE_URL` (see `web/lib/api.ts`).
-- Default is `http://localhost:8000`. Override by creating `web/.env.local`:
-  - `NEXT_PUBLIC_API_BASE_URL=http://localhost:8001`
-
-Checklist:
-- Keep server/client boundaries explicit ("use client").
-- Call backend via `lib/api.ts`; avoid duplicating base URLs.
-- Build accessible, testable components; minimal client state unless needed.
