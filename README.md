@@ -36,13 +36,19 @@ See `AGENTS.md` (root and subfolders) for agent-focused coding guidelines. Agent
 
 Prerequisites: Python 3.12+, Node.js 20+, uv (`pip install uv`) and Docker (optional).
 
-1) Backend
+1) Get reference docs (optional)
+The repo contains a split branch called "ref-docs"
+This branch contains quick-reference docs for key concepts in Python, UV, Node.JS, LangGraph etc
+It intended to be an educational tool and maintained to capture key concepts learned throuhgout devleopment
+Use/contribute to it as needed
+
+2) Backend
 - `cd backend`
 - `uv venv .venv && source .venv/bin/activate`
 - `uv pip install -e ".[dev]"`
 - `python -m uvicorn app.main:app --reload --host ${BACKEND_HOST:-0.0.0.0} --port ${BACKEND_PORT:-8000} 2>&1 | tee -a ../log/backend-dev.log`
 
-2) Web
+3) Web
 - `cd web`
 - `npm install`
 - `npm run dev 2>&1 | tee -a ../log/web-dev.log`
@@ -52,7 +58,7 @@ Prerequisites: Python 3.12+, Node.js 20+, uv (`pip install uv`) and Docker (opti
 - Visit http://localhost:3000/diagnostics to see the live SSE stream.
 - Click "Emit test event" to POST to `/diagnostics/emit` and see events flow.
 
-3) Environment
+5) Environment
 - Copy `.env.example` to `.env` at repo root and adjust values as needed.
 
 ## CI & Releases
